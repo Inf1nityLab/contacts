@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:to_do_app_hive/contact_app/screen/contact_screen.dart';
 import 'package:to_do_app_hive/locator.dart';
+import 'package:to_do_app_hive/task_app/screens/main_screen.dart';
 import 'contact_app/model/contact_model.dart';
-
-
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,11 +27,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
+
       ),
-      home:  Contacts(),
+      home: const MainScreen(),
     );
   }
 }
-
-
-

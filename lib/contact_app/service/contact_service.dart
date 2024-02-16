@@ -14,6 +14,7 @@ class ContactService{
     await contact.add(contactModel);
   }
 
+
   // Получаем наши данные
   Future<List<ContactModel>> poluchitData() async {
     var contact = await _contacts;
