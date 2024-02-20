@@ -26,6 +26,7 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       backgroundColor: Colors.indigo,
       appBar: AppBar(
+        iconTheme: const IconThemeData(color: Colors.white),
         backgroundColor: Colors.indigo,
         actions: [
           Padding(
@@ -41,7 +42,7 @@ class _MainScreenState extends State<MainScreen> {
         ],
       ),
       drawer: const Drawer(
-        backgroundColor: Colors.white,
+
         child: Column(
           children: [Text('Hello'), Icon(Icons.ac_unit)],
         ),
@@ -65,10 +66,10 @@ class _MainScreenState extends State<MainScreen> {
               dayProps: const EasyDayProps(
                 dayStructure: DayStructure.dayStrDayNum,
                 width: 70,
-                height: 90,
+                height: 80,
                 inactiveDayStyle: DayStyle(
-                  dayNumStyle: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
-                  dayStrStyle: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
+                  dayNumStyle: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                  dayStrStyle: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
                   decoration: BoxDecoration(
                     color: Colors.indigoAccent,
                     borderRadius: BorderRadius.all(Radius.circular(25)),
@@ -76,8 +77,8 @@ class _MainScreenState extends State<MainScreen> {
                   ),
                 ),
                 activeDayStyle: DayStyle(
-                  dayNumStyle: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
-                  dayStrStyle: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
+                  dayNumStyle: TextStyle(color: Colors.indigo, fontSize: 20, fontWeight: FontWeight.bold),
+                  dayStrStyle: TextStyle(color: Colors.indigo, fontSize: 10, fontWeight: FontWeight.bold),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.all(Radius.circular(25)),
