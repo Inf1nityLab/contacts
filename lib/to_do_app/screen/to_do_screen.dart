@@ -15,7 +15,7 @@ class ToDoNewProject extends StatelessWidget {
       future: _todoService.getAllTodos(),
       builder: (context, AsyncSnapshot<List<ToDoModel>> snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
-          return TodoListPage(snapshot.data ?? []);
+          return const TodoListPage();
         }
         return const CircularProgressIndicator();
       },
@@ -24,12 +24,7 @@ class ToDoNewProject extends StatelessWidget {
 }
 
 class TodoListPage extends StatefulWidget {
-  final List<ToDoModel> todos;
-
-  TodoListPage(
-    this.todos,
-  );
-
+  const TodoListPage({super.key});
   @override
   _TodoListPageState createState() => _TodoListPageState();
 }
