@@ -1,7 +1,8 @@
 import 'package:easy_date_timeline/easy_date_timeline.dart';
 import 'package:flutter/material.dart';
+
 import 'package:hive/hive.dart';
-import 'package:hive_flutter/adapters.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 import 'package:to_do_app_hive/locator.dart';
 import 'package:to_do_app_hive/task_app/model/task_data.dart';
@@ -16,10 +17,9 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  final EasyInfiniteDateTimelineController _controller =
-      EasyInfiniteDateTimelineController();
 
-  String colorName = 'Colors.green';
+
+  DateTime selectedDay = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +33,7 @@ class _MainScreenState extends State<MainScreen> {
             padding: const EdgeInsets.only(right: 20),
             child: IconButton(
               onPressed: () {
+
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => const AddScreen()));
               },
@@ -55,11 +56,14 @@ class _MainScreenState extends State<MainScreen> {
             padding: const EdgeInsets.only(top: 10, bottom: 10),
             child: EasyDateTimeLine(
               initialDate: DateTime.now(),
-
               onDateChange: (selectedDate) {
-                //`selectedDate` the new date selected.
-              },
 
+                  setState(() {
+                    selectedDay = selectedDate;
+                    print('$selectedDay');
+                  });
+
+              },
               headerProps: const EasyHeaderProps(
                   showMonthPicker: false,
                   monthPickerType: MonthPickerType.dropDown,
@@ -104,7 +108,6 @@ class _MainScreenState extends State<MainScreen> {
             child: Container(
               height: double.infinity,
               width: double.infinity,
-
               decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
@@ -116,7 +119,10 @@ class _MainScreenState extends State<MainScreen> {
                 future: locator<TaskService>().getAllTask(),
                 builder: (context, AsyncSnapshot<List<TaskData>> snapshot) {
                   if (snapshot.connectionState == ConnectionState.done) {
-                    return ContainerBody(snapshot.data ?? []);
+                    return ContainerBody(
+                      snapshot.data ?? [],
+                      selectedDay
+                    );
                   }
                   return const Center(child: CircularProgressIndicator());
                 },
@@ -131,8 +137,9 @@ class _MainScreenState extends State<MainScreen> {
 
 class ContainerBody extends StatefulWidget {
   final List<TaskData> contacts;
+  DateTime selectedDayOne ;
 
-  ContainerBody(this.contacts);
+  ContainerBody(this.contacts, this.selectedDayOne);
 
   @override
   State<ContainerBody> createState() => _ContainerBodyState();
@@ -155,79 +162,86 @@ class _ContainerBodyState extends State<ContainerBody> {
                     itemCount: box.values.length,
                     itemBuilder: (context, index) {
                       var _task = box.get(index);
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Column(
-                              children: [
-                                const CircleAvatar(
-                                  radius: 10,
-                                  backgroundColor: Colors.indigo,
-                                  child: Center(
-                                    child: CircleAvatar(
-                                      backgroundColor: Colors.white,
-                                      radius: 5,
+                      DateTime selectedDay = widget.selectedDayOne;
+                      if (_task!.date.year == selectedDay.year &&
+                          _task!.date.month == selectedDay.month &&
+                          _task!.date.day == selectedDay.day) {
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Column(
+                                children: [
+                                   CircleAvatar(
+                                    radius: 10,
+                                    backgroundColor: Color(_task.colorValue),
+                                    child: const Center(
+                                      child: CircleAvatar(
+                                        backgroundColor: Colors.white,
+                                        radius: 5,
+                                      ),
                                     ),
                                   ),
-                                ),
-                                for (int i = 0; i < 10; i++)
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 5),
-                                    child: Container(
-                                      height: 3,
-                                      width: 3,
-                                      color: Colors.indigo,
-                                    ),
-                                  )
-                              ],
-                            ),
-                            const SizedBox(
-                              width: 15,
-                            ),
-                            Expanded(
-                              child: Container(
-                                height: 100,
-                                width: double.infinity,
-                                decoration: BoxDecoration(
-                                  color: Color(_task!.colorValue),
-                                  borderRadius: BorderRadius.circular(30),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(12.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        '${_task!.startTime}  - ${_task!.endTime.hour} : ${_task!.endTime.minute}',
-                                        style: const TextStyle(
-                                            fontSize: 10,
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.w800),
+                                  for (int i = 0; i < 10; i++)
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 5),
+                                      child: Container(
+                                        height: 3,
+                                        width: 3,
+                                        color: Color(_task.colorValue),
                                       ),
-                                      Text(_task!.taskName),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          const Text('1.5 hours'),
-                                          ElevatedButton(
-                                              onPressed: () {},
-                                              child: const Text('Done'))
-                                        ],
-                                      )
-                                    ],
+                                    )
+                                ],
+                              ),
+                              const SizedBox(
+                                width: 15,
+                              ),
+                              Expanded(
+                                child: Container(
+                                  height: 100,
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                    color: Color(_task!.colorValue),
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(12.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          '${_task!.startTimeHour}:${_task.startTimeMinute}  - ${_task.endTimeHour}:${_task.endTimeMinute} ',
+                                          style: const TextStyle(
+                                              fontSize: 10,
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.w800),
+                                        ),
+                                        Text(_task!.taskName),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            const Text('1.5 hours'),
+                                            ElevatedButton(
+                                                onPressed: () {},
+                                                child: const Text('Done'))
+                                          ],
+                                        )
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                      );
+                            ],
+                          ),
+                        );
+                      } else{
+                        return Container();
+                      }
                     });
               },
             ),

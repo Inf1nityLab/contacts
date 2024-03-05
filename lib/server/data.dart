@@ -15,11 +15,13 @@ class Album{
       'userId': int userId,
       'id': int id,
       'title': String title,
+
       } =>
           Album(
             userId: userId,
             id: id,
             title: title,
+
           ),
       _ => throw const FormatException('Failed to load album.'),
     };

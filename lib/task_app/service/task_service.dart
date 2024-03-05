@@ -6,11 +6,9 @@ import 'package:hive/hive.dart';
 import 'package:to_do_app_hive/task_app/model/task_data.dart';
 
 class TaskService{
-  final String _task = "";
+
 
   Future<Box<TaskData>> get _box async => await Hive.openBox<TaskData>('taskData');
-
-
 
 
   //Create
@@ -18,7 +16,6 @@ class TaskService{
     var task = await _box;
     await task.add(taskData);
   }
-
 
 
   // Read

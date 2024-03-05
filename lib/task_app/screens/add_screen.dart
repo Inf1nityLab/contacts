@@ -1,3 +1,4 @@
+import 'package:easy_date_timeline/easy_date_timeline.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:to_do_app_hive/locator.dart';
@@ -16,6 +17,15 @@ class _AddScreenState extends State<AddScreen> {
   TextEditingController nameController = TextEditingController();
   TimeOfDay startTime = const TimeOfDay(hour: 10, minute: 50);
   TimeOfDay endTime = const TimeOfDay(hour: 10, minute: 50);
+  int selectedColor = 0xFF00FF00;
+  List<Color> colors = const [
+    Color(0xFF00FF00),
+    Color(0xFFFF0000),
+    Color(0xFF0000FF),
+    Color(0xFFFFFF00)
+  ];
+
+  DateTime _selectedDay = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
@@ -66,19 +76,70 @@ class _AddScreenState extends State<AddScreen> {
                   topLeft: Radius.circular(30),
                 ),
               ),
-              child:Padding(
+              child: Padding(
                 padding: const EdgeInsets.only(left: 15, right: 15),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Calendar
-                    const SizedBox(
-                      height: 70,
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10, bottom: 10),
+                      child: EasyDateTimeLine(
+                        initialDate: DateTime.now(),
+                        onDateChange: (selectedDate) {
+                          setState(() {
+                            _selectedDay = selectedDate;
+                            print('date changed');
+                          });
+                        },
+                        headerProps: const EasyHeaderProps(
+                            showMonthPicker: false,
+                            monthPickerType: MonthPickerType.dropDown,
+                            dateFormatter: DateFormatter.fullDateMonthAsStrDY(),
+                            selectedDateStyle: TextStyle(color: Colors.white)),
+                        dayProps: const EasyDayProps(
+                          dayStructure: DayStructure.dayStrDayNum,
+                          width: 70,
+                          height: 80,
+                          inactiveDayStyle: DayStyle(
+                            dayNumStyle: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold),
+                            dayStrStyle: TextStyle(
+                                color: Colors.white,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold),
+                            decoration: BoxDecoration(
+                              color: Colors.indigoAccent,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(25)),
+                            ),
+                          ),
+                          activeDayStyle: DayStyle(
+                            dayNumStyle: TextStyle(
+                                color: Colors.indigo,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold),
+                            dayStrStyle: TextStyle(
+                                color: Colors.indigo,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(25)),
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
                     const Text(
                       'Task Name',
                       style: TextStyle(
-                          fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black),
                     ),
                     const SizedBox(
                       height: 5,
@@ -109,7 +170,8 @@ class _AddScreenState extends State<AddScreen> {
 
                               setState(() => startTime = newTime);
                             },
-                            child: Text('${startTime.hour}:${startTime.minute}')),
+                            child:
+                                Text('${startTime.hour}:${startTime.minute}')),
                         ElevatedButton(
                             onPressed: () async {
                               TimeOfDay? newTime = await showTimePicker(
@@ -122,16 +184,56 @@ class _AddScreenState extends State<AddScreen> {
                             child: Text('${endTime.hour}:${endTime.minute}')),
                       ],
                     ),
+                    SizedBox(
+                      height: 100,
+                      child: ListView.builder(
+                          itemCount: colors.length,
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: InkWell(
+                                onTap: () {
+                                  if (index == 0) {
+                                    setState(() {
+                                      selectedColor = selectedColor;
+                                      print('цвет grenn');
+                                    });
+                                  } else if (index == 1) {
+                                    setState(() {
+                                      selectedColor = 0xFFFF0000;
+                                    });
+                                  } else if (index == 2) {
+                                    setState(() {
+                                      selectedColor = 0xFF0000FF;
+                                    });
+                                  } else {
+                                    setState(() {
+                                      selectedColor = 0xFFFFFF00;
+                                    });
+                                  }
+                                },
+                                child: CircleAvatar(
+                                    radius: 15, backgroundColor: colors[index]),
+                              ),
+                            );
+                          }),
+                    ),
                     ElevatedButton(
                         onPressed: () {
                           if (nameController.text.isNotEmpty) {
                             locator<TaskService>().addTodo(TaskData(
-                              taskName: nameController.text,
-                              startTime: DateTime(startTime.hour, startTime.minute),
-                              endTime: DateTime(endTime.hour, endTime.minute),
-                              colorValue: 0xFFdbe4f3,
-                            ));
+                                taskName: nameController.text,
+                                startTimeHour: startTime.hour,
+                                endTimeMinute: endTime.minute,
+                                colorValue: selectedColor,
+                                date: _selectedDay,
+                                endTimeHour: endTime.hour,
+                                startTimeMinute: startTime.minute));
                             Navigator.pop(context);
+
+                          } else{
+                            print('name is empty');
                           }
                         },
                         child: const Text('Add Data'))
@@ -144,8 +246,6 @@ class _AddScreenState extends State<AddScreen> {
       ),
     );
   }
-
-
 }
 
 // enum Color {red, green, indigo, black}
