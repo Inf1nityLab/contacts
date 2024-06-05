@@ -196,7 +196,7 @@ class _AddScreenState extends State<AddScreen> {
                                 onTap: () {
                                   if (index == 0) {
                                     setState(() {
-                                      selectedColor = selectedColor;
+                                      selectedColor = 0xFF00FF00;
                                       print('цвет grenn');
                                     });
                                   } else if (index == 1) {
@@ -221,21 +221,18 @@ class _AddScreenState extends State<AddScreen> {
                     ),
                     ElevatedButton(
                         onPressed: () {
-                          if (nameController.text.isNotEmpty) {
-                            locator<TaskService>().addTodo(TaskData(
-                                taskName: nameController.text,
-                                startTimeHour: startTime.hour,
-                                endTimeMinute: endTime.minute,
-                                colorValue: selectedColor,
-                                date: _selectedDay,
-                                endTimeHour: endTime.hour,
-                                startTimeMinute: startTime.minute));
-                            Navigator.pop(context);
-
-                          } else{
-                            print('name is empty');
-                          }
+                          locator<TaskService>().addTodo(TaskData(
+                              taskName: nameController.text,
+                              startTimeHour: startTime.hour,
+                              endTimeMinute: endTime.minute,
+                              colorValue: selectedColor,
+                              date: _selectedDay,
+                              endTimeHour: endTime.hour,
+                              startTimeMinute: startTime.minute));
+                          Navigator.pop(context);
                         },
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(selectedColor)),
                         child: const Text('Add Data'))
                   ],
                 ),

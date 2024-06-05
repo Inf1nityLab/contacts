@@ -29,6 +29,7 @@ class _MainScreenState extends State<MainScreen> {
         iconTheme: const IconThemeData(color: Colors.white),
         backgroundColor: Colors.indigo,
         actions: [
+
           Padding(
             padding: const EdgeInsets.only(right: 20),
             child: IconButton(

@@ -1,6 +1,5 @@
 
 import 'package:get_it/get_it.dart';
-import 'package:to_do_app_hive/contact_app/service/contact_service.dart';
 import 'package:to_do_app_hive/task_app/service/task_service.dart';
 
 
